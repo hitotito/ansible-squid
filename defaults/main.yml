@@ -1,0 +1,5 @@
+---
+squid_user: root 
+squid_group: root 
+
+squid_os_folder_config: /etc/squid
