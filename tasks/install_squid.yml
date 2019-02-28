@@ -1,7 +1,9 @@
 ---
-- name: INSTALL | Ensure squid is installed
+- name: INSTALL | Ensure squid packages are installed
   apt:
-    name: squid
+    name: 
+      - squid
+      - squidclient
     state: present
 
 - name: INSTALL | Copy squid config
