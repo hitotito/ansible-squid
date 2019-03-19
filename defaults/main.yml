@@ -1,5 +1,12 @@
 ---
+squid_version: 3.5.23
 squid_user: root 
 squid_group: root 
 
 squid_os_folder_config: /etc/squid
+
+squid_force_recompile: false
+squid_ssl_bump_enabled: true
+
+squid_tmp_compilation_folder: /tmp/squid_compilation
+squid_tmp_compilation_folder_cleanup: true

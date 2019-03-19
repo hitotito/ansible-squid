@@ -1,0 +1,71 @@
+---
+- name: INSTALL_SSL | Install squid with --enable-ssl
+  when: not squid_installed_with_ssl_enabled or squid_force_recompile
+  block:
+    - name: INSTALL_SSL | update apt-cache
+      apt:
+        update_cache: yes
+
+    - name: INSTALL_SSL | Ensure temporary folder exists
+      file:
+        name: "{{ squid_tmp_compilation_folder }}"
+        state: directory
+
+    - name: INTALL_SSL | Fetch squid source code
+      command: "{{ item }}"
+      with_items:
+        - apt-get source squid
+        - apt-get build-dep -y squid
+      args:
+        chdir: "{{ squid_tmp_compilation_folder }}"
+      warn: False
+
+    - name: INSTALL_SSL | Install compilation dependenies
+      apt:
+        name:
+          - devscripts
+          - build-essential
+          - fakeroot
+          - libcrypto++-dev
+          - libssl1.0-dev  # for squid3
+          # - libssl-dev     # for squid4
+
+    - name: INSTALL_SSL | Enable SSL on debian package rules
+      replace:
+        path: "{{ squid_source_folder }}/debian/rules"
+        regexp: "--enable-ecap"
+        replace: "--enable-ecap \\\n --enable-ssl \\\n --enable-ssl-crtd \\\n --with-openssl"
+        backup: no
+
+    - name: INSTALL_SSL | Run ./configure script
+      shell: |
+        ./configure >> "{{ squid_tmp_compilation_folder }}/configure.output" 2>> "{{ squid_tmp_compilation_folder }}/configure.error"
+      args:
+        chdir: "{{ squid_source_folder }}"
+
+    - name: INSTALL_SSL | Build squid (with ssl) debian package
+      shell: |
+        debuild -us -uc -b >> "{{ squid_tmp_compilation_folder }}/debuild.output" 2>> "{{ squid_tmp_compilation_folder }}/debuild.error"
+      args:
+        chdir: "{{ squid_source_folder }}"
+
+    - name: INSTALL_SSL | Install squid dependencies
+      apt:
+        name:
+          - apache2
+          - libcap2-bin
+          - libdbi-perl
+          - squid
+          - squid-langpack
+
+    - name: INSTALL_SSL | Install squid (with ssl) package
+      shell: |
+        dpkg -i squid_*.deb squid3*.deb squid-*.deb squidclient*.deb >> "{{ squid_tmp_compilation_folder }}/dpkg.output" 2>> "{{ squid_tmp_compilation_folder }}/dpkg.error"
+      args:
+        chdir: "{{ squid_tmp_compilation_folder }}"
+
+    - name: INSTALL_SSL | Clean up compilation
+      when: squid_tmp_compilation_folder_cleanup
+      file:
+        name: "{{ squid_tmp_compilation_folder }}"
+        state: absent

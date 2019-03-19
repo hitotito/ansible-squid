@@ -3,20 +3,6 @@
   apt:
     name: 
       - squid
+      - squid3
       - squidclient
     state: present
-
-- name: INSTALL | Copy squid config
-  template:
-    src: squid.conf.j2
-    dest: "{{ squid_os_folder_config }}/squid.conf"
-    mode: 0644
-    owner: "{{ squid_user }}"
-    group: "{{ squid_group }}"
-  notify:
-    - restart squid
-
-- name: INSTALL | Ensure squid is enabled
-  systemd:
-    name: squid
-    enabled: yes

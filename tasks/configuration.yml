@@ -1,0 +1,15 @@
+---
+- name: CONFIG | Copy squid config
+  template:
+    src: squid.conf.j2
+    dest: "{{ squid_os_folder_config }}/squid.conf"
+    mode: 0644
+    owner: "{{ squid_user }}"
+    group: "{{ squid_group }}"
+  notify:
+    - restart squid
+
+- name: CONFIG | Ensure squid is enabled
+  systemd:
+    name: squid
+    enabled: yes

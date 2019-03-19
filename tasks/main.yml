@@ -1,5 +1,19 @@
 ---
-- name: Install squid
+- name: Install squid [non-ssl]
   import_tasks: install_squid.yml
+  when: not squid_ssl_bump_enabled
   tags:
-    - always
+    - install
+
+- name: Install squid [ssl] 
+  import_tasks: install_squid_ssl.yml
+  when: squid_ssl_bump_enabled
+  tags:
+    - install
+
+- name: Configuration
+  import_tasks: configuration.yml
+  tags:
+    - install
+    - configuration
+  

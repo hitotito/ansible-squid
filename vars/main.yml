@@ -1,0 +1,5 @@
+---
+squid_installed: "{{ hostvars[inventory_hostname].ansible_local.hitotito_squid.squid.installed }}"
+squid_installed_with_ssl_enabled: "{{ hostvars[inventory_hostname].ansible_local.hitotito_squid.squid.ssl }}"
+
+squid_source_folder: "{{squid_tmp_compilation_folder }}/squid3-{{squid_version}}"

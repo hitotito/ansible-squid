@@ -4,10 +4,16 @@ galaxy_info:
   author: Hitoshi Okonogi
   description: role to install & manage squid
   license: MIT
-  platfors:
+  platforms:
     - name: Debian
       version:
         - stretch
   galaxy_tags:
     - squid
     - proxy
+
+dependencies:
+  - role: hitotito.custom-facts
+    tags: always
+    custom_facts_name: hitotito_squid
+    custom_facts_file: squid.fact
