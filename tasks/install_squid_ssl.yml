@@ -11,14 +11,14 @@
         name: "{{ squid_tmp_compilation_folder }}"
         state: directory
 
-    - name: INTALL_SSL | Fetch squid source code
+    - name: INSTALL_SSL | Fetch squid source code
       command: "{{ item }}"
       with_items:
         - apt-get source squid
         - apt-get build-dep -y squid
       args:
         chdir: "{{ squid_tmp_compilation_folder }}"
-      warn: False
+        warn: False
 
     - name: INSTALL_SSL | Install compilation dependenies
       apt:
